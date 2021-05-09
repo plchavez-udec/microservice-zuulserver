@@ -26,6 +26,13 @@ import org.springframework.web.filter.CorsFilter;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	
+	private static final String ENDPOINT_BASE_TRD = "/api-trd/**";
+	private static final String ENDPOINT_BASE_USERS = "/api-user/**";
+	private static final String ENDPOINT_BASE_FORDERS = "/api-folders/%s";
+	private static final String ENDPOINT_BASE_DOCUMENTS = "/api-documents/**";
+	private static final String ROLE_ADMIN = "ADMIN";
+	private static final String ROLE_SECRETARIO = "SECRETARIO";
+	
 	@Value("${config.security.oauth.jwt.key}")
 	private String jwtKey;
 	
@@ -37,7 +44,26 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/api/security/**").permitAll()
-				.antMatchers(HttpMethod.POST, "/api/folders/logical-folder/v1/logical-folder/").hasRole("ADMIN")
+				// Microservicio de usuarios
+				.antMatchers(HttpMethod.POST, ENDPOINT_BASE_USERS).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, ENDPOINT_BASE_USERS).hasRole(ROLE_ADMIN)
+				// Microservicio trd
+				.antMatchers(HttpMethod.POST, ENDPOINT_BASE_TRD).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, ENDPOINT_BASE_TRD).permitAll()
+				.antMatchers(HttpMethod.PUT, ENDPOINT_BASE_TRD).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.PATCH, ENDPOINT_BASE_TRD).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.DELETE, ENDPOINT_BASE_TRD).hasRole(ROLE_ADMIN)
+				// Microservicio carpetas
+				.antMatchers(HttpMethod.POST, String.format(ENDPOINT_BASE_FORDERS, "**")).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, String.format(ENDPOINT_BASE_FORDERS, "**")).permitAll()
+				.antMatchers(HttpMethod.PATCH, String.format(ENDPOINT_BASE_FORDERS, "**")).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.DELETE, String.format(ENDPOINT_BASE_FORDERS, "**")).hasRole(ROLE_ADMIN)
+				// Microservicio binarios
+				.antMatchers(HttpMethod.POST, "/api-files/**").hasAnyRole(ROLE_ADMIN, ROLE_SECRETARIO)
+				.antMatchers(HttpMethod.GET, "/api-files/**").hasAnyRole(ROLE_ADMIN, ROLE_SECRETARIO)
+				// Microservicio binarios
+				.antMatchers(HttpMethod.POST, ENDPOINT_BASE_DOCUMENTS).hasAnyRole(ROLE_ADMIN, ROLE_SECRETARIO)
+				.antMatchers(HttpMethod.GET, ENDPOINT_BASE_DOCUMENTS).permitAll()
 				.anyRequest().authenticated()
 				.and().cors().configurationSource(corsConfigurationSource());// COnsigurar quien puede cpnsumir el servicio
 
