@@ -46,7 +46,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/api/security/**").permitAll()
 				// Microservicio de usuarios
 				.antMatchers(HttpMethod.POST, ENDPOINT_BASE_USERS).hasRole(ROLE_ADMIN)
-				.antMatchers(HttpMethod.GET, ENDPOINT_BASE_USERS).hasRole(ROLE_ADMIN)
+				.antMatchers(HttpMethod.GET, ENDPOINT_BASE_USERS).permitAll()
 				// Microservicio trd
 				.antMatchers(HttpMethod.POST, ENDPOINT_BASE_TRD).hasRole(ROLE_ADMIN)
 				.antMatchers(HttpMethod.GET, ENDPOINT_BASE_TRD).permitAll()
