@@ -61,8 +61,9 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 				// Microservicio binarios
 				.antMatchers(HttpMethod.POST, "/api-files/**").hasAnyRole(ROLE_ADMIN, ROLE_SECRETARIO)
 				.antMatchers(HttpMethod.GET, "/api-files/**").hasAnyRole(ROLE_ADMIN, ROLE_SECRETARIO)
-				// Microservicio binarios
+				// Microservicio documentos
 				.antMatchers(HttpMethod.POST,  ENDPOINT_BASE_DOCUMENTS).hasAnyRole(ROLE_ADMIN, ROLE_SECRETARIO)
+				.antMatchers(HttpMethod.DELETE,  ENDPOINT_BASE_DOCUMENTS).hasRole(ROLE_ADMIN)
 				.antMatchers(HttpMethod.GET,   ENDPOINT_BASE_DOCUMENTS).permitAll()
 				.antMatchers(HttpMethod.PATCH, ENDPOINT_BASE_DOCUMENTS).permitAll()
 				.anyRequest().authenticated()
